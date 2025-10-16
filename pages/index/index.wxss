@@ -1,13 +1,13 @@
+/* pages/index/index.wxss */
 .banners {
   width: 100%;
   height: 300rpx;
 
 }
 
-.banners image{
-  width: 100%;  
+.banners image {
+  width: 100%;
   height: 100%;
-
 }
 
 /* 五个图标导航区域 */
@@ -36,50 +36,35 @@
   margin: 20rpx 0;
 }
 
-.navItem {
+
+.navItem text {
   font-size: 26rpx;
 }
 
-/* 推荐歌曲 */
 
+/* 推荐歌曲 */
 .recommendContainer {
   padding: 20rpx;
 }
 
-.recommendContainer .header .title{
-  font-size: 32rpx;
-  line-height: 80rpx;
-  color:#666
-}
-
-.recommendContainer .header{
-  padding-bottom: 20rpx;
-}
-
-.recommendContainer .header .more {
-  float: right;
-  border:1rpx solid #333;
-  padding: 10rpx 20rpx;
-  font-size: 24rpx;
-  border-radius: 30rpx;
-}
 
 
 /* 推荐内容区*/
 .recommendScroll {
   display: flex;
+  height: 300rpx;
 }
-
 .scrollItem {
   width: 200rpx;
   margin-right: 20rpx;
-  
+
 }
 
 .scrollItem image {
   width: 200rpx;
   height: 200rpx;
   border-radius: 10rpx;
+
 }
 
 .scrollItem text {
@@ -96,4 +81,52 @@
   display: -webkit-box;
   -webkit-box-orient: vertical; /*设置对其模式*/
   -webkit-line-clamp: 2; /*设置多行的行数*/
+}
+
+
+/* 排行榜  */
+.topList {
+  padding: 20rpx;
+}
+
+.topListSwiper {
+  height: 400rpx;
+}
+
+.swiperItem {
+  width: 96%;
+  background: #fbfbfb;
+}
+.swiperItem .title {
+  font-size: 30rpx;
+  line-height: 80rpx;
+
+}
+
+.musicItem {
+  /* 当一个元素设置为flex，其子元素会自动成为block元素*/
+  display: flex;
+  margin-bottom: 20rpx;
+}
+
+.musicItem image{
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 6rpx;
+}
+
+.musicItem .count {
+  width: 100rpx;
+  height: 100rpx;
+  text-align: center;
+  line-height: 100rpx;
+}
+
+.musicItem .musicName {
+  height: 100rpx;
+  line-height: 100rpx;
+  max-width: 400rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
