@@ -1,0 +1,125 @@
+/* pages/login/login.wxss */
+.wrapper{
+  position:relative;
+  z-index: 90;
+  padding-bottom: 40rpx;
+}
+
+.left-top-sign{
+  font-size: 120rpx;
+  color: #f8f8f8;
+  position:relative;
+  left: -16rpx;
+}
+
+.welcome{
+  position:relative;
+  left: 50rpx;
+  top: -90rpx;
+  font-size: 46rpx;
+  color: #555;
+}
+
+/* 登录方式选择标签 */
+.login-type-tabs {
+  display: flex;
+  margin: 0 60rpx 40rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+  border: 2rpx solid #e0e0e0;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  background: #f5f5f5;
+  transition: all 0.3s;
+}
+
+.tab-item.active {
+  background: #d43c33;
+  color: #fff;
+}
+
+.input-content{
+  padding: 0 60rpx;
+}
+
+.input-item{
+  display:flex;
+  flex-direction: column;
+  align-items:flex-start;
+  justify-content: center;
+  padding: 0 30rpx;
+  background:#f8f6fc;
+  min-height: 120rpx;
+  border-radius: 4px;
+  margin-bottom: 50rpx;
+}
+
+.input-item:last-child{
+  margin-bottom: 0;
+}
+
+.input-item .tit{
+  height: 50rpx;
+  line-height: 56rpx;
+  font-size: 30rpx;
+  color: #606266;
+}
+
+.input-item input{
+  height: 60rpx;
+  font-size: 30rpx;
+  color: #303133;
+  width: 100%;
+}
+
+/* Cookie输入框样式 */
+.cookie-input {
+  width: 100%;
+  min-height: 120rpx;
+  max-height: 400rpx;
+  font-size: 28rpx;
+  color: #303133;
+  line-height: 1.4;
+  padding: 10rpx 0;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+.cookie-item {
+  min-height: 160rpx;
+  padding: 20rpx 30rpx;
+}
+
+.confirm-btn{
+  width: 630rpx!important;
+  height: 76rpx;
+  line-height: 76rpx;
+  border-radius: 50rpx;
+  margin-top: 70rpx;
+  background: #d43c33;
+  color: #fff;
+  font-size: 32rpx;
+  padding: 0;
+}
+
+.confirm-btn2:after{
+  border-radius: 100px;
+}
+
+.forget-section{
+  font-size: 28rpx;
+  color: #4399fc;
+  text-align: center;
+  margin-top: 40rpx;
+}
+
+.forget-section text {
+  color: #4399fc;
+  text-decoration: underline;
+}

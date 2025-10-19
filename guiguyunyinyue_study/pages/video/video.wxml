@@ -1,0 +1,16 @@
+<view class="videoContainer">
+  <!-- 头部区域 -->
+  <view class="header">
+    <image src="/static/images/video/video.jpg"></image>
+    <view class="search" bindtap="toSearch">
+      搜索音乐
+    </view>
+    <image src="/static/images/logo.png"></image>
+  </view>
+
+  <!-- 视频功能暂不可用提示 -->
+  <view class="unavailable-notice">
+    <text class="notice-text">视频功能暂不可用</text>
+    <text class="notice-desc">QQ音乐接口暂不支持视频相关功能</text>
+  </view>
+</view>
