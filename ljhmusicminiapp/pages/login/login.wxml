@@ -1,0 +1,39 @@
+<view class="container">
+  <view class="wrapper">
+    <view class="left-top-sign">LOGIN</view>
+    <view class="welcome">
+      欢迎回来！
+    </view>
+    
+    <!-- 登录方式选择 -->
+    <view class="login-type-tabs">
+      <view class="tab-item {{loginType === 'cookie' ? 'active' : ''}}" bindtap="switchLoginType" data-type="cookie">Cookie登录</view>
+      <view class="tab-item {{loginType === 'qq' ? 'active' : ''}}" bindtap="switchLoginType" data-type="qq">QQ号登录</view>
+    </view>
+    
+    <view class="input-content">
+      <!-- Cookie登录 -->
+      <view wx:if="{{loginType === 'cookie'}}" class="input-item cookie-item">
+        <text class="tit">Cookie值</text>
+        <textarea placeholder="请输入完整的Cookie值" data-type="cookie" bindinput="handleInput" class="cookie-input" auto-height="{{true}}" maxlength="-1"></textarea>
+      </view>
+      
+      <!-- QQ号登录 -->
+      <view wx:if="{{loginType === 'qq'}}">
+        <view class="input-item">
+          <text class="tit">QQ号</text>
+          <input type="number" placeholder="请输入QQ号" data-type="qqNumber" bindinput="handleInput"/>
+        </view>
+        <view class="input-item cookie-item">
+          <text class="tit">Cookie值</text>
+          <textarea placeholder="请输入Cookie值" data-type="cookie" bindinput="handleInput" class="cookie-input" auto-height="{{true}}" maxlength="-1"></textarea>
+        </view>
+      </view>
+    </view>
+    
+    <button class="confirm-btn" bindtap="login">登录</button>
+    <view class="forget-section">
+      <text bindtap="showCookieHelp">如何获取Cookie?</text>
+    </view>
+  </view>
+</view>
