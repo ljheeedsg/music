@@ -4,14 +4,15 @@
     "pages/search/search",
     "pages/video/video",
     "pages/login/login",
-    "pages/personal/personal"
+    "pages/personal/personal",
+    "pages/aiai/aiai"
   ],
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "window": {
     "navigationBarBackgroundColor": "#d43c33",
     "navigationBarTextStyle": "white",
-    "navigationBarTitleText": "硅谷云音乐"
+    "navigationBarTitleText": "ljh"
   },
   "tabBar": {
     "color": "#333",
@@ -29,6 +30,12 @@
         "text": "视频",
         "iconPath": "/static/images/tabs/select.png",
         "selectedIconPath": "/static/images/tabs/selected.png"
+      },
+      {
+        "pagePath": "pages/aiai/aiai",
+        "text": "AI聊天",
+        "iconPath": "/static/images/tabs/tab-my.png",
+        "selectedIconPath": "/static/images/tabs/tab-my-current.png"
       },
       {
         "pagePath": "pages/personal/personal",
