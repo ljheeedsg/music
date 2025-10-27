@@ -1,7 +1,6 @@
 {
-  "usingComponents": {},
-  "navigationBarTitleText": "AI智能助手",
-  "navigationBarBackgroundColor": "#1a1a2e",
-  "navigationBarTextStyle": "white",
-  "backgroundColor": "#1a1a2e"
+  "navigationBarTitleText": "ljh和qy的机器人对话",
+  "disableScroll": true,
+  "navigationBarBackgroundColor": "#0f0c29",
+  "navigationBarTextStyle": "white"
 }

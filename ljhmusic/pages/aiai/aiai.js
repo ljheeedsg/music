@@ -1,94 +1,96 @@
-// pages/chat/chat.js
+// pages/index/index.js
 Page({
   data: {
     messages: [
-      {
-        id: 1,
-        role: 'ai',
-        content: '您好！我是AI智能助手，有什么可以帮您的吗？'
-      }
+      { id: 1, role: 'ai', content: '你好，我是赛博 AI，有什么可以帮你？' }
     ],
     inputValue: '',
     isTyping: false,
     scrollTop: 0,
-    autoFocus: false,
-    messageId: 2
+    msgId: 2,
+    history: [{ role: 'system', content: 'You are a helpful assistant' }]
   },
 
-  onLoad: function () {
-    // 页面加载时设置初始焦点
-    this.setData({
-      autoFocus: true
-    });
+  onInput(e) {
+    this.setData({ inputValue: e.detail.value });
   },
 
-  onInput: function (e) {
+  sendMessage() {
+    const text = this.data.inputValue.trim();
+    if (!text) return;
+
+    const userMsg = { id: this.data.msgId++, role: 'user', content: text };
     this.setData({
-      inputValue: e.detail.value
-    });
-  },
-
-  sendMessage: function () {
-    const message = this.data.inputValue.trim();
-    if (!message) return;
-
-    // 添加用户消息
-    const userMessage = {
-      id: this.data.messageId++,
-      role: 'user',
-      content: message
-    };
-
-    this.setData({
-      messages: [...this.data.messages, userMessage],
+      messages: [...this.data.messages, userMsg],
       inputValue: '',
-      isTyping: true
+      history: [...this.data.history, { role: 'user', content: text }]
     });
-
-    // 滚动到底部
-    this.scrollToBottom();
-
-    // 模拟AI回复（后续可替换为真实API调用）
-    setTimeout(() => {
-      this.receiveAIResponse(message);
-    }, 1000);
+    this.scrollBottom();
+    this.callDeepSeek();
   },
 
-  receiveAIResponse: function (userMessage) {
-    // 模拟AI回复逻辑
-    let response = '';
-    
-    if (userMessage.includes('你好') || userMessage.includes('您好')) {
-      response = '您好！很高兴为您服务。';
-    } else if (userMessage.includes('天气')) {
-      response = '我目前无法获取实时天气数据，但您可以告诉我您所在的城市，我可以提供一般性的天气信息。';
-    } else if (userMessage.includes('帮助')) {
-      response = '我可以回答各种问题、提供信息、聊天交流等。请随时向我提问！';
-    } else {
-      response = '这是一个模拟回复。在实际应用中，这里会调用AI API生成智能回复。您刚才说的是：' + userMessage;
-    }
+  callDeepSeek() {
+    this.setData({ isTyping: true });
+    wx.request({
+      url: 'https://api.deepseek.com/v1/chat/completions',
+      method: 'POST',
+      header: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer sk-5205b603683c4454866ded5711f11828'
+      },
+      data: {
+        model: 'deepseek-chat',
+        messages: this.data.history,
+        stream: false
+      },
+      success: (res) => {
+        if (res.statusCode === 200 && res.data && res.data.choices) {
+          const reply = res.data.choices[0].message.content;
+          this.typeWriter(reply);   // <-- 打字机效果
+        } else {
+          throw new Error('response error');
+        }
+      },
+      fail: () => {
+        this.setData({ isTyping: false });
+        wx.showToast({ title: '网络错误', icon: 'none' });
+      }
+    });
+  },
 
-    const aiMessage = {
-      id: this.data.messageId++,
-      role: 'ai',
-      content: response
+  // 打字机效果
+  typeWriter(text) {
+    let i = 0;
+    const showText = () => {
+      if (i <= text.length) {
+        const aiMsg = {
+          id: this.data.msgId,
+          role: 'ai',
+          content: text.slice(0, i)
+        };
+        this.setData({
+          messages: [...this.data.messages.slice(0, -1), aiMsg],
+          scrollTop: 99999
+        });
+        i++;
+        setTimeout(showText, 30);
+      } else {
+        this.setData({
+          isTyping: false,
+          history: [...this.data.history, { role: 'assistant', content: text }],
+          msgId: this.data.msgId + 1
+        });
+      }
     };
-
+    // 先 push 一个空占位
     this.setData({
-      messages: [...this.data.messages, aiMessage],
+      messages: [...this.data.messages, { id: this.data.msgId, role: 'ai', content: '' }],
       isTyping: false
     });
-
-    // 滚动到底部
-    this.scrollToBottom();
+    showText();
   },
 
-  scrollToBottom: function () {
-    // 使用延时确保消息渲染完成后再滚动
-    setTimeout(() => {
-      this.setData({
-        scrollTop: 99999  // 设置一个足够大的值确保滚动到底部
-      });
-    }, 100);
+  scrollBottom() {
+    setTimeout(() => this.setData({ scrollTop: 99999 }), 100);
   }
 });

@@ -1,5 +1,7 @@
 {
   "pages": [
+    
+    
     "pages/index/index",
     "pages/search/search",
     "pages/video/video",
@@ -12,11 +14,8 @@
   "window": {
     "navigationBarBackgroundColor": "#d43c33",
     "navigationBarTextStyle": "white",
-<<<<<<< HEAD:ljhmusic/app.json
     "navigationBarTitleText": "ljh"
-=======
-    "navigationBarTitleText": "特马头音乐"
->>>>>>> 8bfc41a3f9b0127737160b00ce779881ff0b1bc8:ljhmusicapp/app.json
+
   },
   "tabBar": {
     "color": "#333",

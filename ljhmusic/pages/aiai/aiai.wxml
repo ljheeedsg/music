@@ -1,58 +1,36 @@
-<!--pages/chat/chat.wxml-->
-<view class="container">
-  <!-- 顶部标题栏 -->
-  <view class="header">
-    <view class="title">AI智能助手</view>
-    <view class="status">
-      <view class="status-dot"></view>
-      <text>在线</text>
+<view class="header">
+  <view class="robot-box">
+    <image class="robot" src=""></image>
+    <view class="wave"></view>
+  </view>
+  <text class="title">DeepSeek AI</text>
+</view>
+
+<!-- 聊天内容区 -->
+<scroll-view scroll-y scroll-top="{{scrollTop}}" class="chat-area">
+  <view class="msg-wrap">
+    <view wx:for="{{messages}}" wx:key="id" class="msg {{item.role}} slide-in">
+      <text class="name">{{item.role=='user'?'我':'AI'}}</text>
+      <text class="bubble">{{item.content}}</text>
+    </view>
+    <view wx:if="{{isTyping}}" class="msg ai slide-in">
+      <text class="name">AI</text>
+      <text class="bubble typing"></text>
     </view>
   </view>
+</scroll-view>
 
-  <!-- 聊天消息区域 -->
-  <scroll-view class="chat-area" scroll-y scroll-with-animation scroll-top="{{scrollTop}}">
-    <view class="messages">
-      <block wx:for="{{messages}}" wx:key="id">
-        <view class="message {{item.role === 'user' ? 'user-message' : 'ai-message'}}">
-          <view class="avatar {{item.role === 'user' ? 'user-avatar' : 'ai-avatar'}}">
-            <text>{{item.role === 'user' ? '我' : 'AI'}}</text>
-          </view>
-          <view class="bubble">
-            <text>{{item.content}}</text>
-          </view>
-        </view>
-      </block>
-      
-      <!-- AI正在输入指示器 -->
-      <view class="typing-indicator" wx:if="{{isTyping}}">
-        <view class="avatar ai-avatar">
-          <text>AI</text>
-        </view>
-        <view class="bubble typing-bubble">
-          <view class="typing-dots">
-            <view class="dot"></view>
-            <view class="dot"></view>
-            <view class="dot"></view>
-          </view>
-        </view>
-      </view>
-    </view>
-  </scroll-view>
-
-  <!-- 输入区域 -->
-  <view class="input-area">
-    <view class="input-container">
-      <input 
-        class="input" 
-        placeholder="输入您的问题..." 
-        bindinput="onInput" 
-        value="{{inputValue}}"
-        bindconfirm="sendMessage"
-        focus="{{autoFocus}}"
-      />
-      <button class="send-btn" bindtap="sendMessage" disabled="{{!inputValue.trim()}}">
-        <text class="send-icon">发送</text>
-      </button>
-    </view>
+<!-- 输入栏：永远贴底 -->
+<view class="input-bar">
+  <input
+    value="{{inputValue}}"
+    bindinput="onInput"
+    bindconfirm="sendMessage"
+    confirm-type="send"
+    placeholder="输入消息..."
+    placeholder-style="color:#666"
+  />
+  <view class="send-btn {{inputValue?'active':''}}" bindtap="sendMessage">
+    <text class="btn-txt">▶</text>
   </view>
 </view>
