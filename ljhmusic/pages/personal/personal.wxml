@@ -18,10 +18,10 @@
       <view class="tit">
         <!-- 会员图标-->
         <text class="iconfont icon-huiyuan-"></text>
-        ljh会员
+        会员
       </view>
       <text class="e-m">atguigu Union</text>
-      <text class="e-b">开通会员听歌, 撸代码</text>
+      <text class="e-b">开通会员听歌</text>
     </view>
   </view>
 
@@ -60,8 +60,8 @@
         <text class="title">最近播放</text>
         <!-- 播放记录功能暂不可用 -->
         <view class="unavailable-notice">
-          <text class="notice-text">该功能暂不可用</text>
-          <text class="notice-desc">QQ音乐接口暂不支持播放记录功能</text>
+          <text class="notice-text">该功能暂时不可用</text>
+          <text class="notice-desc">QQ音乐接口暂时不支持播放记录功能</text>
         </view>
       </view>
 
