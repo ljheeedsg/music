@@ -12,9 +12,9 @@
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "window": {
-    "navigationBarBackgroundColor": "#d43c33",
+    "navigationBarBackgroundColor": "#b71c1c",
     "navigationBarTextStyle": "white",
-    "navigationBarTitleText": "ljh"
+    "navigationBarTitleText": "特马头音乐"
 
   },
   "tabBar": {
@@ -37,7 +37,7 @@
       {
         "pagePath": "pages/aiai/aiai",
         "text": "AI聊天",
-        "iconPath": "/static/images/tabs/tab-my.png",
+        "iconPath": "/static/images/tabs/番茄-current.png",
         "selectedIconPath": "/static/images/tabs/tab-my-current.png"
       },
       {

@@ -1,9 +1,9 @@
 <view class="header">
   <view class="robot-box">
-    <image class="robot" src=""></image>
+    <image class="robot" src="/static/images/nvsheng.jpg"></image>
     <view class="wave"></view>
   </view>
-  <text class="title">DeepSeek AI</text>
+  <text class="title">Tomato AI</text>
 </view>
 
 <!-- 聊天内容区 -->
