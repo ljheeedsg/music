@@ -1,12 +1,26 @@
+<!--pages/index/index.wxml-->
+<!-- 烟花层 -->
+<view class="fireworks" wx:if="{{showWish}}">
+  <view class="fw-text">祝老师同学们天天快乐！</view>
+  <view class="particle" wx:for="{{particles}}" wx:key="*this" style="{{item}}"></view>
+</view>
+
+<!-- 原头部 + 祝福按钮 -->
 <view class="header">
   <view class="robot-box">
     <image class="robot" src="/static/images/tabs/番茄icon-copy.png"></image>
     <view class="wave"></view>
   </view>
-  <text class="title">Tomato AI</text>
+  <text class="title">ljh和qy的AI宝贝</text>
+  <view class="mode-switch">
+    <text class="mode-btn {{mode==='fast'?'active':''}}" bindtap="switchMode" data-mode="fast">极速模式</text>
+    <text class="mode-btn {{mode==='reason'?'active':''}}" bindtap="switchMode" data-mode="reason">思考模式</text>
+  </view>
+  <!-- 祝福按钮 -->
+  <view class="wish-btn" bindtap="startWish">🎉 祝福</view>
 </view>
 
-<!-- 聊天内容区 -->
+<!-- 原聊天区 -->
 <scroll-view scroll-y scroll-top="{{scrollTop}}" class="chat-area">
   <view class="msg-wrap">
     <view wx:for="{{messages}}" wx:key="id" class="msg {{item.role}} slide-in">
@@ -20,16 +34,10 @@
   </view>
 </scroll-view>
 
-<!-- 输入栏：永远贴底 -->
+<!-- 原输入栏 -->
 <view class="input-bar">
-  <input
-    value="{{inputValue}}"
-    bindinput="onInput"
-    bindconfirm="sendMessage"
-    confirm-type="send"
-    placeholder="输入消息..."
-    placeholder-style="color:#666"
-  />
+  <input value="{{inputValue}}" bindinput="onInput" bindconfirm="sendMessage"
+    confirm-type="send" placeholder="输入消息..." placeholder-style="color:#666"/>
   <view class="send-btn {{inputValue?'active':''}}" bindtap="sendMessage">
     <text class="btn-txt">▶</text>
   </view>

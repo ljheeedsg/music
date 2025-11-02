@@ -190,3 +190,100 @@ input {
   color: #fff;
   font-size: 36rpx;
 }
+
+/* 承接上文全部样式，仅追加 */
+.mode-switch {
+  display: flex;
+  margin-left: auto;
+  border: 2rpx solid rgba(255, 255, 255, .3);
+  border-radius: 30rpx;
+  overflow: hidden;
+}
+
+.mode-btn {
+  padding: 10rpx 20rpx;
+  font-size: 26rpx;
+  color: #fff;
+  transition: all .3s;
+}
+
+.mode-btn.active {
+  background: #00f0ff;
+  color: #000;
+  font-weight: bold;
+}
+
+/* 烟花全屏遮罩 */
+.fireworks {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle, rgba(0, 0, 0, .7), rgba(0, 0, 0, .9));
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn .6s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.fw-text {
+  font-size: 60rpx;
+  font-weight: bold;
+  background: linear-gradient(90deg, #ff00ff, #00f0ff);
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: neon 1s infinite alternate;
+}
+
+@keyframes neon {
+  from {
+    text-shadow: 0 0 10rpx #ff00ff, 0 0 20rpx #ff00ff;
+  }
+
+  to {
+    text-shadow: 0 0 20rpx #00f0ff, 0 0 30rpx #00f0ff;
+  }
+}
+
+/* 粒子 */
+.particle {
+  position: absolute;
+  width: 6rpx;
+  height: 6rpx;
+  border-radius: 50%;
+  background: #fff;
+  animation: burst 1s ease-out forwards;
+}
+
+@keyframes burst {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(var(--x), var(--y)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* 祝福按钮 */
+.wish-btn {
+  margin-left: 20rpx;
+  padding: 12rpx 24rpx;
+  background: linear-gradient(135deg, #ff00ff, #00f0ff);
+  border-radius: 30rpx;
+  font-size: 28rpx;
+  color: #000;
+  font-weight: bold;
+  box-shadow: 0 0 20rpx rgba(255, 0, 255, .6);
+}
