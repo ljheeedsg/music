@@ -1,6 +1,6 @@
 <view class="header">
   <view class="robot-box">
-    <image class="robot" src="/static/images/nvsheng.jpg"></image>
+    <image class="robot" src="/static/images/tabs/番茄icon-copy.png"></image>
     <view class="wave"></view>
   </view>
   <text class="title">Tomato AI</text>
