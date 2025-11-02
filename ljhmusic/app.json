@@ -37,8 +37,8 @@
       {
         "pagePath": "pages/aiai/aiai",
         "text": "AI聊天",
-        "iconPath": "/static/images/tabs/番茄-current.png",
-        "selectedIconPath": "/static/images/tabs/tab-my-current.png"
+        "iconPath": "/static/images/tabs/番茄icon.png",
+        "selectedIconPath": "/static/images/tabs/番茄icon-copy.png"
       },
       {
         "pagePath": "pages/personal/personal",

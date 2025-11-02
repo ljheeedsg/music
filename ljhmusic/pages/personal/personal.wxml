@@ -13,7 +13,7 @@
     <view class="vip-card-box">
       <image class="card-bg" src="/static/images/personal/vip-card-bg.png" mode=""></image>
       <view class="b-btn">
-        立即开通
+        禁止开通
       </view>
       <view class="tit">
         <!-- 会员图标-->
