@@ -7,89 +7,132 @@ Page({
   data: {
     videoGroupList: [], // 导航标签数据
     navId: '', // 导航的标识
-    videoList: [], // 视频列表数据
+    videoList: [], // 视频列表数据（MV列表）
     videoId: '', // 视频id标识
     videoUpdateTime: [], // 记录video播放的时长
     isTriggered: false, // 标识下拉刷新是否被触发
+    recommendSongs: [], // 每日推荐歌曲
+    currentMvIndex: 0, // 当前展示的MV索引
+    
+    // 搜索相关
+    searchKeyword: '', // 搜索关键词
+    searchResults: [], // 搜索结果
+    showSearchPanel: false, // 是否显示搜索面板
+    isSearchMode: false, // 是否处于搜索模式
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    // 获取导航数据
-    this.getVideoGroupListData();
+    // 获取每日推荐歌曲，并基于歌曲获取相关MV
+    this.getRecommendSongsAndMv();
    
   },
   
-  // 获取导航数据
-  async getVideoGroupListData(){
-    // QQMusicApi暂不支持视频分组接口，设置默认数据
-    console.log('QQMusicApi暂不支持视频分组接口');
-    this.setData({
-      videoGroupList: [],
-      navId: ''
-    });
-    
-    /* 原始代码保留备用
+  // 获取每日推荐歌曲并获取相关MV
+  async getRecommendSongsAndMv() {
     try {
-      let videoGroupListData = await request('/video/group/list');
+      wx.showLoading({
+        title: '加载中...'
+      });
+
+      // 1. 获取每日推荐歌曲
+      const recommendData = await request('/new/songs');
+      console.log('每日推荐数据:', recommendData);
       
-      // 验证数据结构
-      if (videoGroupListData && videoGroupListData.data && Array.isArray(videoGroupListData.data) && videoGroupListData.data.length > 0) {
-        this.setData({
-          videoGroupList: videoGroupListData.data.slice(0, 14),
-          navId: videoGroupListData.data[0].id
-        })
-        
-        // 获取视频列表数据
-        this.getVideoList(this.data.navId);
-      } else {
-        console.error('视频分组数据格式错误或为空:', videoGroupListData);
-        // 设置默认值
-        this.setData({
-          videoGroupList: [],
-          navId: ''
-        })
+      if (!recommendData.data || !recommendData.data.list || recommendData.data.list.length === 0) {
+        wx.showToast({
+          title: '暂无推荐歌曲',
+          icon: 'none'
+        });
+        wx.hideLoading();
+        return;
       }
-    } catch (error) {
-      console.error('获取视频分组数据失败:', error);
-      // 设置默认值
+
+      const songs = recommendData.data.list;
       this.setData({
-        videoGroupList: [],
-        navId: ''
-      })
+        recommendSongs: songs
+      });
+
+      // 2. 获取相关MV（从前10首歌曲中获取）
+      await this.loadMvData(songs.slice(0, 10));
+      
+      wx.hideLoading();
+    } catch (error) {
+      console.error('获取推荐歌曲和MV失败:', error);
+      wx.hideLoading();
+      wx.showToast({
+        title: '加载失败',
+        icon: 'none'
+      });
     }
-    */
   },
-  // 获取视频列表数据
-  async getVideoList(navId){
-    // QQMusicApi不支持/video/group接口
-    wx.hideLoading();
-    this.setData({
-      videoList: [],
-      isTriggered: false
-    });
-    return;
+
+  // 加载MV数据
+  async loadMvData(songs, isAppend = false) {
+    const mvList = [];
     
-    // 原始代码（已注释）
-    // if(!navId){ // 判断navId为空串的情况
-    //   return;
-    // }
-    // let videoListData = await request('/video/group', {id: navId});
-    // // 关闭消息提示框
-    // wx.hideLoading();
-    // 
-    // 
-    // let index = 0;
-    // let videoList = videoListData.datas.map(item => {
-    //   item.id = index++;
-    //   return item;
-    // })
-    // this.setData({
-    //   videoList,
-    //   isTriggered: false // 关闭下拉刷新
-    // })
+    // 如果是追加模式，先获取现有的vid集合
+    const existingVids = new Set();
+    if (isAppend) {
+      this.data.videoList.forEach(mv => {
+        if (mv.vid) existingVids.add(mv.vid);
+      });
+    }
+    
+    for (let song of songs) {
+      try {
+        // 使用歌曲的id获取相关MV
+        const songId = song.id;
+        if (!songId) continue;
+
+        const mvData = await request('/song/mv', { id: songId });
+        console.log(`歌曲 ${song.name} (id: ${songId}) 的相关MV:`, mvData);
+        
+        if (mvData.result === 100 && mvData.data && Array.isArray(mvData.data) && mvData.data.length > 0) {
+          // 为每个MV添加来源歌曲信息
+          mvData.data.forEach(mv => {
+            mv.sourceSong = {
+              name: song.name,
+              singer: song.singer?.map(s => s.name).join('/') || '未知歌手'
+            };
+            // 只添加不重复的MV
+            if (!existingVids.has(mv.vid)) {
+              mvList.push(mv);
+              existingVids.add(mv.vid);
+            }
+          });
+        }
+      } catch (error) {
+        console.error(`获取歌曲 ${song.name} 的MV失败:`, error);
+      }
+    }
+
+    console.log(`本次获取到 ${mvList.length} 个新MV`);
+    
+    // 根据模式更新videoList
+    let finalList;
+    if (isAppend) {
+      finalList = [...this.data.videoList, ...mvList];
+    } else {
+      finalList = mvList;
+    }
+
+    console.log(`更新后总共 ${finalList.length} 个MV`);
+
+    this.setData({
+      videoList: finalList
+    });
+
+    if (finalList.length === 0) {
+      wx.showToast({
+        title: '暂无相关MV',
+        icon: 'none'
+      });
+    } else {
+      console.log('MV列表已更新，共', finalList.length, '个MV');
+    }
   },
   
   // 点击切换导航的回调
@@ -175,27 +218,125 @@ Page({
   handleEnded(event){
     // 移除记录播放时长数组中当前视频的对象
     let {videoUpdateTime} = this.data;
-    videoUpdateTime.splice(videoUpdateTime.findIndex(item => item.vid === event.currentTarget.id), 1);
+    const index = videoUpdateTime.findIndex(item => item.vid === event.currentTarget.id);
+    if (index > -1) {
+      videoUpdateTime.splice(index, 1);
+    }
     this.setData({
-      videoUpdateTime
+      videoUpdateTime,
+      videoId: '' // 清空当前播放的视频ID
     })
+  },
+
+  // 视频播放错误处理
+  handleVideoError(event) {
+    console.error('视频播放错误:', event.detail);
+    wx.showToast({
+      title: '视频播放失败',
+      icon: 'none',
+      duration: 2000
+    });
+    // 清空当前播放的视频ID，重新显示封面
+    this.setData({
+      videoId: ''
+    });
   },
   
   // 自定义下拉刷新的回调： scroll-view
   handleRefresher(){
     console.log('scroll-view 下拉刷新');
-    // 再次发请求，获取最新的视频列表数据
-    this.getVideoList(this.data.navId);
+    // 重新获取推荐歌曲和MV
+    this.getRecommendSongsAndMv();
   },
   
+  // 获取MV播放链接
+  async getMvUrl(vid) {
+    try {
+      const urlData = await request('/mv/url', { id: vid });
+      if (urlData.result === 100 && urlData.data && urlData.data[vid]) {
+        const urls = urlData.data[vid];
+        return urls.length > 0 ? urls[urls.length - 1] : ''; // 返回最高清晰度的链接
+      }
+    } catch (error) {
+      console.error('获取MV播放链接失败:', error);
+    }
+    return '';
+  },
+
+  // 点击MV获取播放链接
+  async handleMvTap(event) {
+    const { vid, index } = event.currentTarget.dataset;
+    
+    console.log('点击MV:', { vid, index });
+    
+    // 如果已经有播放链接，直接播放
+    const currentMv = this.data.videoList[index];
+    if (currentMv && currentMv.playUrl) {
+      console.log('使用已有播放链接');
+      this.setData({
+        videoId: vid
+      });
+      return;
+    }
+    
+    wx.showLoading({
+      title: '加载播放链接...'
+    });
+
+    const mvUrl = await this.getMvUrl(vid);
+    console.log('获取到的播放链接:', mvUrl);
+    wx.hideLoading();
+
+    if (!mvUrl) {
+      wx.showToast({
+        title: 'MV播放链接获取失败',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+
+    // 更新videoList中对应MV的播放链接
+    const videoList = [...this.data.videoList];
+    videoList[index].playUrl = mvUrl;
+    
+    console.log('设置播放链接并开始播放');
+    
+    this.setData({
+      videoList,
+      videoId: vid
+    });
+  },
+
   // 自定义上拉触底的回调 scroll-view
   handleToLower(){
     console.log('scroll-view 上拉触底');
-    // 数据分页： 1. 后端分页， 2. 前端分页
-    console.log('发送请求 || 在前端截取最新的数据 追加到视频列表的后方');
-    console.log('网易云音乐暂时没有提供分页的api');
-    // 模拟数据
-    let newVideoList = [
+    // 加载更多歌曲的相关MV
+    const { recommendSongs, currentMvIndex } = this.data;
+    const nextBatch = recommendSongs.slice(currentMvIndex + 10, currentMvIndex + 20);
+    
+    if (nextBatch.length === 0) {
+      wx.showToast({
+        title: '没有更多了',
+        icon: 'none'
+      });
+      return;
+    }
+
+    wx.showLoading({
+      title: '加载更多...'
+    });
+
+    // 注意：这里传入 true 表示追加模式
+    this.loadMvData(nextBatch, true).then(() => {
+      this.setData({
+        currentMvIndex: this.data.currentMvIndex + 10
+      });
+      wx.hideLoading();
+    });
+    
+    // 原始模拟数据（已移除）
+    /* let newVideoList = [
       {
         "type": 1,
         "displayed": false,
@@ -1801,19 +1942,239 @@ Page({
           "subscribed": false
         }
       }
-    ];
-    let videoList = this.data.videoList;
-    // 将视频最新的数据更新原有视频列表数据中
-    videoList.push(...newVideoList);
-    this.setData({
-      videoList
-    })
+    ]; */
   },
-  // 跳转至搜索界面
+  // 显示搜索面板
   toSearch(){
-    wx.navigateTo({
-      url: '/pages/search/search'
-    })
+    this.setData({
+      showSearchPanel: true,
+      searchKeyword: '',
+      searchResults: []
+    });
+  },
+
+  // 关闭搜索面板
+  closeSearch() {
+    this.setData({
+      showSearchPanel: false,
+      searchKeyword: '',
+      searchResults: [],
+      isSearchMode: false
+    });
+  },
+
+  // 搜索输入变化
+  handleSearchInput(event) {
+    const keyword = event.detail.value.trim();
+    this.setData({
+      searchKeyword: keyword
+    });
+    
+    // 防抖处理
+    if (this.searchTimer) {
+      clearTimeout(this.searchTimer);
+    }
+    
+    if (!keyword) {
+      this.setData({
+        searchResults: []
+      });
+      return;
+    }
+    
+    this.searchTimer = setTimeout(() => {
+      this.quickSearch(keyword);
+    }, 500);
+  },
+
+  // 快速搜索
+  async quickSearch(keyword) {
+    try {
+      wx.showLoading({
+        title: '搜索中...'
+      });
+
+      const result = await request('/search/quick', { key: keyword });
+      console.log('快速搜索结果:', result);
+
+      wx.hideLoading();
+
+      if (result.result === 100 && result.data) {
+        // 根据实际返回结构提取MV数据
+        const mvData = result.data.mv;
+        const mvList = mvData?.itemlist || [];
+        console.log('搜索到的MV:', mvList);
+        console.log('MV数量:', mvData?.count || 0);
+        
+        if (mvList.length === 0) {
+          wx.showToast({
+            title: '未找到相关MV',
+            icon: 'none'
+          });
+          this.setData({
+            searchResults: []
+          });
+          return;
+        }
+
+        // 转换MV数据格式
+        this.setData({
+          searchResults: mvList.map(item => ({
+            vid: item.vid,
+            name: item.name,
+            singer: item.singer,
+            mid: item.mid, // 保存mid，可能需要用来获取封面
+            // 使用默认封面或者根据mid生成封面URL
+            cover_pic: item.pic || `http://y.gtimg.cn/music/photo_new/T002R300x300M000${item.mid}.jpg`,
+            duration: item.time || 0,
+            singers: [{ name: item.singer }],
+            playcnt: 0, // 快速搜索不返回播放次数
+            isSearchResult: true
+          }))
+        });
+
+        console.log('处理后的MV列表:', this.data.searchResults);
+      }
+    } catch (error) {
+      console.error('搜索失败:', error);
+      wx.hideLoading();
+      wx.showToast({
+        title: '搜索失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  // 点击搜索结果的MV
+  async handleSearchMvTap(event) {
+    const { vid, index } = event.currentTarget.dataset;
+    
+    console.log('点击搜索结果MV:', { vid, index });
+    
+    // 切换到搜索模式，显示该MV
+    const searchMv = this.data.searchResults[index];
+    
+    wx.showLoading({
+      title: '加载播放链接...'
+    });
+
+    const mvUrl = await this.getMvUrl(vid);
+    console.log('获取到的播放链接:', mvUrl);
+    wx.hideLoading();
+
+    if (!mvUrl) {
+      wx.showToast({
+        title: 'MV播放链接获取失败',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+
+    // 添加播放链接并切换到搜索模式
+    searchMv.playUrl = mvUrl;
+    
+    this.setData({
+      isSearchMode: true,
+      videoList: [searchMv], // 临时显示搜索的MV
+      videoId: vid,
+      showSearchPanel: false
+    });
+  },
+
+  // 返回推荐列表
+  backToRecommend() {
+    this.setData({
+      isSearchMode: false,
+      videoId: ''
+    });
+    // 重新加载推荐MV
+    this.getRecommendSongsAndMv();
+  },
+
+  // 点击示例关键词
+  handleExampleKeyword(event) {
+    const keyword = event.currentTarget.dataset.keyword;
+    this.setData({
+      searchKeyword: keyword
+    });
+    this.quickSearch(keyword);
+  },
+
+  // 使用MV搜索（完整搜索）
+  async searchMvByKeyword() {
+    const keyword = this.data.searchKeyword.trim();
+    if (!keyword) {
+      wx.showToast({
+        title: '请输入搜索关键词',
+        icon: 'none'
+      });
+      return;
+    }
+
+    try {
+      wx.showLoading({
+        title: '搜索中...'
+      });
+
+      // 使用普通搜索接口，类型为MV (t=12)
+      const result = await request('/search', { 
+        key: keyword, 
+        t: 12,  // 12表示搜索MV
+        pageSize: 20 
+      });
+      
+      console.log('完整MV搜索结果:', result);
+      wx.hideLoading();
+
+      if (result.result === 100 && result.data && result.data.list) {
+        const mvList = result.data.list.map(item => ({
+          vid: item.v_id || item.vid,  // 尝试不同的字段名
+          name: item.mv_name || item.name,
+          singer: item.singer_name || item.singer,
+          mid: item.mv_mid || item.mid,
+          // 根据mid生成封面URL，或使用返回的pic
+          cover_pic: item.mv_pic || item.pic || `http://y.gtimg.cn/music/photo_new/T002R300x300M000${item.mv_mid || item.mid}.jpg`,
+          duration: item.mv_time || item.time || 0,
+          singers: item.singer_list || [{ name: item.singer_name || item.singer }],
+          playcnt: item.listen_num || item.playcount || 0,
+          isSearchResult: true
+        }));
+
+        console.log('处理后的完整MV列表:', mvList);
+
+        this.setData({
+          videoList: mvList,
+          isSearchMode: true,
+          showSearchPanel: false
+        });
+
+        if (mvList.length === 0) {
+          wx.showToast({
+            title: '未找到相关MV',
+            icon: 'none'
+          });
+        } else {
+          wx.showToast({
+            title: `找到${mvList.length}个MV`,
+            icon: 'success',
+            duration: 1500
+          });
+        }
+      } else {
+        wx.showToast({
+          title: '未找到相关MV',
+          icon: 'none'
+        });
+      }
+    } catch (error) {
+      console.error('MV搜索失败:', error);
+      wx.hideLoading();
+      wx.showToast({
+        title: '搜索失败',
+        icon: 'none'
+      });
+    }
   },
   /**
    * 生命周期函数--监听页面初次渲染完成

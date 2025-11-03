@@ -3,7 +3,7 @@
   <view class="header">
     <image src="/static/images/video/video.jpg"></image>
     <view class="search" bindtap="toSearch">
-      搜索音乐
+      搜索MV
     </view>
     <image src="/static/images/logo.png"></image>
   </view>
@@ -95,9 +95,134 @@
       </view>
     </scroll-view>
 
-  <!-- 视频功能暂不可用提示 -->
-  <view class="unavailable-notice">
-    <text class="notice-text">视频功能暂不可用</text>
-    <text class="notice-desc">QQ音乐接口暂不支持视频相关功能</text>
+  <!-- 搜索模式提示 -->
+  <view class="search-mode-tip" wx:if="{{isSearchMode}}">
+    <text>搜索结果</text>
+    <text class="back-btn" bindtap="backToRecommend">返回推荐</text>
+  </view>
+
+  <!-- MV列表 -->
+  <scroll-view 
+    class="videoScroll" 
+    scroll-y
+    refresher-enabled
+    refresher-triggered="{{isTriggered}}"
+    bindrefresherrefresh="handleRefresher"
+    bindscrolltolower="handleToLower"
+    lower-threshold="100"
+  >
+    <view class="mv-list" wx:if="{{videoList.length > 0}}">
+      <view class="mv-item" wx:for="{{videoList}}" wx:key="vid">
+        <!-- MV封面（可点击） -->
+        <view class="mv-cover-container" wx:if="{{!item.playUrl || videoId !== item.vid}}" data-vid="{{item.vid}}" data-index="{{index}}" bindtap="handleMvTap">
+          <image class="mv-cover" src="{{item.cover_pic}}" mode="aspectFill"></image>
+          <view class="play-icon">
+            <text class="iconfont icon-bofang"></text>
+          </view>
+          <view class="mv-duration">{{item.duration}}s</view>
+        </view>
+
+        <!-- 视频播放器（获取到播放链接后显示） -->
+        <view class="mv-player-container" wx:if="{{item.playUrl && videoId === item.vid}}">
+          <video 
+            class="mv-player"
+            id="{{item.vid}}"
+            src="{{item.playUrl}}"
+            controls
+            autoplay
+            object-fit="contain"
+            show-center-play-btn
+            enable-progress-gesture
+            bindtimeupdate="handleTimeUpdate"
+            bindended="handleEnded"
+            binderror="handleVideoError"
+          ></video>
+        </view>
+
+        <!-- MV信息 -->
+        <view class="mv-info">
+          <view class="mv-title">{{item.name || '未知MV'}}</view>
+          <view class="mv-desc">
+            <text class="singer">{{item.singers && item.singers.length > 0 ? item.singers[0].name : '未知歌手'}}</text>
+            <text class="play-count" wx:if="{{item.playcnt}}">播放: {{item.playcnt}}</text>
+          </view>
+          <view class="source-song" wx:if="{{item.sourceSong}}">
+            <text class="tag">来自推荐</text>
+            <text class="song-info">{{item.sourceSong.name}} - {{item.sourceSong.singer}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态提示 -->
+    <view class="empty-notice" wx:if="{{videoList.length === 0}}">
+      <text class="empty-text">正在加载MV...</text>
+      <text class="empty-desc">为您推荐精彩MV内容</text>
+    </view>
+  </scroll-view>
+
+  <!-- 搜索面板 -->
+  <view class="search-panel" wx:if="{{showSearchPanel}}">
+    <view class="search-mask" bindtap="closeSearch"></view>
+    <view class="search-content">
+      <!-- 搜索头部 -->
+      <view class="search-header">
+        <view class="search-input-box">
+          <input 
+            class="search-input" 
+            type="text" 
+            placeholder="搜索MV" 
+            value="{{searchKeyword}}"
+            bindinput="handleSearchInput"
+            focus="{{showSearchPanel}}"
+            confirm-type="search"
+            bindconfirm="searchMvByKeyword"
+          />
+          <text class="iconfont icon-search search-icon"></text>
+        </view>
+        <view class="cancel-btn" bindtap="closeSearch">取消</view>
+      </view>
+
+      <!-- 快速搜索结果（实时显示） -->
+      <view class="quick-results" wx:if="{{searchResults.length > 0}}">
+        <view class="result-title">相关MV</view>
+        <scroll-view class="result-list" scroll-y>
+          <view 
+            class="result-item" 
+            wx:for="{{searchResults}}" 
+            wx:key="vid"
+            data-vid="{{item.vid}}"
+            data-index="{{index}}"
+            bindtap="handleSearchMvTap"
+          >
+            <image class="result-cover" src="{{item.cover_pic}}" mode="aspectFill"></image>
+            <view class="result-info">
+              <view class="result-name">{{item.name}}</view>
+              <view class="result-singer">{{item.singer}}</view>
+            </view>
+            <view class="play-tag">
+              <text class="iconfont icon-bofang"></text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <!-- 搜索提示 -->
+      <view class="search-tips" wx:if="{{searchKeyword && searchResults.length === 0}}">
+        <text class="tip-text">未找到相关MV</text>
+        <text class="tip-desc">试试其他关键词</text>
+      </view>
+
+      <!-- 默认提示 -->
+      <view class="search-placeholder" wx:if="{{!searchKeyword}}">
+        <text class="placeholder-icon iconfont icon-search"></text>
+        <text class="placeholder-text">输入歌手、歌曲名搜索MV</text>
+        <view class="example-keywords">
+          <text class="keyword-item" data-keyword="周杰伦" bindtap="handleExampleKeyword">周杰伦</text>
+          <text class="keyword-item" data-keyword="Taylor Swift" bindtap="handleExampleKeyword">Taylor Swift</text>
+          <text class="keyword-item" data-keyword="告白气球" bindtap="handleExampleKeyword">告白气球</text>
+        </view>
+      </view>
+    </view>
   </view>
 </view>
