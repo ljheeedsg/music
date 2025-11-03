@@ -7,6 +7,93 @@
     </view>
     <image src="/static/images/logo.png"></image>
   </view>
+    <!-- 导航区域 -->
+    <scroll-view srcoll-x >
+      <view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view>
+      <view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view>
+      <view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view>
+      <view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view><view class="navItem">
+        <view class="navContent">
+          推荐      
+        </view>
+      </view>
+    </scroll-view>
 
   <!-- 视频功能暂不可用提示 -->
   <view class="unavailable-notice">
