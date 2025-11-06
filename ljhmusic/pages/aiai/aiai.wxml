@@ -6,7 +6,7 @@
 
 <view class="header">
   <view class="robot-box">
-    <image class="robot" src="https://img.alicdn.com/imgextra/i3/O1CN01ZbM1XY1zZZj4A6wGf_!!6000000006728-0-tps-260-260.jpg"></image>
+    <image class="robot" src="/static/images/tabs/番茄icon-copy.png"></image>
     <view class="wave"></view>
   </view>
   <text class="title">DeepSeek AI</text>
