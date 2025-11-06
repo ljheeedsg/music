@@ -287,3 +287,28 @@ input {
   font-weight: bold;
   box-shadow: 0 0 20rpx rgba(255, 0, 255, .6);
 }
+
+/* 承接之前的样式，新增快捷键样式 */
+.quick-keys {
+  display: flex;
+  overflow-x: auto;
+  padding: 15rpx 30rpx;
+  background: rgba(255, 255, 255, 0.1);
+  margin-bottom: 15rpx;
+}
+
+.quick-key {
+  padding: 10rpx 20rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 30rpx;
+  margin-right: 15rpx;
+  font-size: 28rpx;
+  white-space: nowrap;
+  animation: slideIn 0.5s ease forwards;
+  cursor: pointer;
+  user-select: none;
+}
+
+.quick-key:hover {
+  background: rgba(0, 240, 255, 0.3);
+}
