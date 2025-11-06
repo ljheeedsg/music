@@ -1,22 +1,19 @@
-<!--pages/index/index.wxml-->
-<!-- 烟花层 -->
+<!-- pages/index/index.wxml -->
 <view class="fireworks" wx:if="{{showWish}}">
   <view class="fw-text">祝老师同学们天天快乐！</view>
   <view class="particle" wx:for="{{particles}}" wx:key="*this" style="{{item}}"></view>
 </view>
 
-<!-- 原头部 + 祝福按钮 -->
 <view class="header">
   <view class="robot-box">
-    <image class="robot" src="/static/images/tabs/番茄icon-copy.png"></image>
+    <image class="robot" src="https://img.alicdn.com/imgextra/i3/O1CN01ZbM1XY1zZZj4A6wGf_!!6000000006728-0-tps-260-260.jpg"></image>
     <view class="wave"></view>
   </view>
-  <text class="title">ljh和qy的AI宝贝</text>
+  <text class="title">DeepSeek AI</text>
   <view class="mode-switch">
     <text class="mode-btn {{mode==='fast'?'active':''}}" bindtap="switchMode" data-mode="fast">极速模式</text>
     <text class="mode-btn {{mode==='reason'?'active':''}}" bindtap="switchMode" data-mode="reason">思考模式</text>
   </view>
-  <!-- 祝福按钮 -->
   <view class="wish-btn" bindtap="startWish">🎉 祝福</view>
 </view>
 
@@ -34,10 +31,21 @@
   </view>
 </scroll-view>
 
+<!-- 快捷键区域 -->
+<view class="quick-keys">
+  <view class="quick-key" wx:for="{{quickKeys}}" wx:key="id" bindtap="sendQuickKey" data-key="{{item}}">{{item}}</view>
+</view>
+
 <!-- 原输入栏 -->
 <view class="input-bar">
-  <input value="{{inputValue}}" bindinput="onInput" bindconfirm="sendMessage"
-    confirm-type="send" placeholder="输入消息..." placeholder-style="color:#666"/>
+  <input
+    value="{{inputValue}}"
+    bindinput="onInput"
+    bindconfirm="sendMessage"
+    confirm-type="send"
+    placeholder="输入消息..."
+    placeholder-style="color:#666"
+  />
   <view class="send-btn {{inputValue?'active':''}}" bindtap="sendMessage">
     <text class="btn-txt">▶</text>
   </view>
