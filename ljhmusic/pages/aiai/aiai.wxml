@@ -9,7 +9,7 @@
     <image class="robot" src="/static/images/tabs/番茄icon-copy.png"></image>
     <view class="wave"></view>
   </view>
-  <text class="title">DeepSeek AI</text>
+  <text class="title">LJH和QY的特马头</text>
   <view class="mode-switch">
     <text class="mode-btn {{mode==='fast'?'active':''}}" bindtap="switchMode" data-mode="fast">极速模式</text>
     <text class="mode-btn {{mode==='reason'?'active':''}}" bindtap="switchMode" data-mode="reason">思考模式</text>
@@ -45,6 +45,7 @@
     confirm-type="send"
     placeholder="输入消息..."
     placeholder-style="color:#666"
+    maxlength="1000" 
   />
   <view class="send-btn {{inputValue?'active':''}}" bindtap="sendMessage">
     <text class="btn-txt">▶</text>
